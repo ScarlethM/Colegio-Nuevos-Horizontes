@@ -13,7 +13,6 @@ const registar = async (req, res)=>{
         return res.status(400).json({msg: error.message});
     }
 
-
     try {
         //Guardar un nuevo estudiante
         const estudiante = new Estudiante(req.body);
