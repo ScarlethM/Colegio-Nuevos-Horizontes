@@ -25,10 +25,34 @@ const registar = async (req, res)=>{
     }
 };
 
-const perfil = (req, res)=>{
-
-   
+const perfil =  (req, res)=>{  
     res.json({msg: "Mostrando perfil"});
 };
 
-export{registar,perfil };
+const confirmar = async (req, res)=>{
+    const { token } = req.params;
+    const usuarioConfirmar = await Estudiante.findOne({token});
+    
+    if(!usuarioConfirmar){
+        const error = new Error('Token no valido')
+        return res.status(404).json({msg: error.message});
+    }
+
+    try {
+        usuarioConfirmar.token= null;
+        usuarioConfirmar.confirmado = true;
+        await usuarioConfirmar.save()
+
+        res.json({msg: 'Usuario confirmado correctamente'})
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const autenticar = (req,res) => {
+    console.log(req.body);
+    res.json({msg:'Autenticando'})
+
+}
+
+export{registar,perfil , confirmar, autenticar};

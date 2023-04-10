@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-
+import bcrypt from "bcrypt";
+import generarId from "../helpers/generarId.js";
 
 const estudianteSchema = mongoose.Schema({
 
@@ -33,6 +34,7 @@ const estudianteSchema = mongoose.Schema({
     }, 
     token: {
         type:String,
+        default: generarId(),
     }, 
     confirmado: {
         type: Boolean,
@@ -40,6 +42,15 @@ const estudianteSchema = mongoose.Schema({
     }
 
 });
+
+// Hashear el password , el next es para que un pass ya hasheado no lo vuelva a hacer
+estudianteSchema.pre('save', async function(next){
+    if (!this.isModified('password')){
+        next()
+    }
+    const salt= await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
+})
 
 const Estudiante = mongoose.model("Estudiante", estudianteSchema);
 export default Estudiante;
